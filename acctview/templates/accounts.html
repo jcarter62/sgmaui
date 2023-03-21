@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+    <div class="container">
+        <div class="row">
+            <div class="col-9">
+                <h2>WMIS Account List</h2>
+            </div>
+            <div class="col-3">
+                <span>
+                <input type="checkbox" id="show_wells" name="show_wells" value="show_wells"
+                       {% if show_account_chk %}
+                          checked
+                       {% endif %}
+                       onclick="show_account_chk()" >
+                <label for="show_wells">Show only accounts with wells</label>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Generate a list of accounts using rows from the database -->
+    <div class="container">
+    <div class="row">
+        <div class="col-1">
+            <h4>Account</h4>
+        </div>
+    </div>
+    {% for row in data.object_list %}
+        <div class="row">
+            <div class="col-1">
+                {{ row }}
+            </div>
+            <div class="col-7" id="x{{ row }}x">
+                &nbsp;
+            </div>
+            {# add small button to open  'account_wells' page #}
+            <div class="col-1">
+                <a href="{% url 'account_wells' row %}" class="btn btn-primary btn-sm" id="y{{ row }}y">Wells</a>
+            </div>
+        </div>
+    {% endfor %}
+        <hr>
+        <div class="row">
+            <div class="col-2">
+                {% if data.has_previous %}
+                    <a href="?page=1">&laquo;</a>&nbsp;
+                    <a href="?page={{ data.previous_page_number }}">&leftarrow;</a>
+                {% endif %}
+                &nbsp;{{ data.number }} of {{ data.paginator.num_pages }}&nbsp;
+                {% if data.has_next %}
+                {% endif %}
+                {% if data.has_next %}
+                    <a href="?page={{ data.next_page_number }}">&rightarrow;</a>&nbsp;
+                    <a href="?page={{ data.paginator.num_pages }}">&raquo;</a>
+                {% endif %}
+            </div>
+            <div class="col-2" title="Record Count">
+                <img src="{% static 'stack-overflow.svg' %}" width="20" height="20"> {{ record_count }}
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        function load_row_details(rowid, url) {
+            let id = "x" + rowid + "x";
+            const target = document.getElementById(id);
+            let loadingMsg ='...';
+            target.innerText = loadingMsg;
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    let newTxt = data.fullname + ", " +
+                        data.addr1 + ", " + data.addr2 + ", " +
+                        data.city + " " + data.state + " " + data.zip;
+                    target.innerText = newTxt;
+                });
+        }
+
+        function load_row_well_counts(rowid, url) {
+            let id = "y" + rowid + "y";
+            const target = document.getElementById(id);
+            //let loadingMsg ='...';
+            //target.innerText = loadingMsg;
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    let newTxt = data.well_count + " wells";
+                    target.innerText = newTxt;
+                });
+        }
+
+        // execute function when the page is ready
+        function load_details() {
+            {% for row in data.object_list %}
+                load_row_details("{{ row }}", "{% url 'account_details' row %}");
+                load_row_well_counts("{{ row }}", "{% url 'account_well_count' row %}");
+            {% endfor %}
+        }
+
+        function show_account_chk() {
+            let show_wells = document.getElementById("show_wells").checked;
+            console.log("show_wells: " + show_wells);
+            // save the value in a cookie
+            if (show_wells) {
+                setCookie('show_account_chk', 'on', 30, "/");
+            } else {
+                setCookie('show_account_chk', 'off', 30, "/");
+            }
+        }
+
+    </script>
+{% endblock %}

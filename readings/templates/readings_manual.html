@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <h3>Manual Readings</h3>
+    <div class="container">
+        <div class="row">
+            <div class="col-3">
+                <label>Well ID</label>
+                <input type="text" id="wellid" value=""/>
+            </div>
+            <div class="col-9">
+                <div class="row">
+                    <div class="col-6">
+                        <div class="row">
+                            <label>Previous Reading</label>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="row">
+                            <label>New Reading</label>
+                        </div>
+                        <div class="row">
+                            <label>Reading Date</label>
+                            <input type="date" id="readingdate" value=""/>
+                        </div>
+                        <div class="row">
+                            <label>Reading Time</label>
+                            <input type="time" id="readingtime" value=""/>
+                        </div>
+                        <div class="row">
+                            <label>Reading Value</label>
+                            <input type="text" id="readingvalue" value=""/>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <br>
+{% endblock %}

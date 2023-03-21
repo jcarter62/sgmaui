@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    Require user to be logged in.
+    <br>
+    <a href="{% url 'display_wells'%}">Wells in SGMA Program</a>
+    <hr>
+    Maintain Wells in SGMA Program
+    <br>
+    <hr>
+    If user is a customer, Present list of wells assigned to customer.
+    <br>
+    If user is an employee,<br>
+    Present list of wells and allow user and/remove wells from this program.
+    <br>
+{% endblock %}

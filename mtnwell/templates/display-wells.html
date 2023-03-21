@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <div class="container text-left">
+        <div class="row heading">
+            <div class="col-1">Well ID</div>
+            <div class="col-1">WMIS</div>
+            <div class="col-1">GWMP</div>
+            <div class="col-1">SGMA</div>
+            <div class="col-1">Well<br>Associations</div>
+        </div>
+        {% for p in wells.object_list %}
+            <div class="row" id="x{{ p }}">
+                <div class="col-1">{{ p.well_id }}</div>
+                <div class="col-1">{{ p.wmis }}</div>
+                <div class="col-1">{{ p.gwmp }}</div>
+                <div class="col-1">{{ p.sgma }}</div>
+                <div class="col-1">
+                {% if p.wa == 'X' %}
+                    <a href="{% url 'display_well_details' p.well_id %}">
+                        <img id="icon-image" class="invert" src="{% static 'format-list-checks.svg' %}" width="20px" />
+                    </a>
+                {% else %}
+                    <img id="icon-image" class="invert" title="There are no records available" src="{% static 'cancel.svg' %}" width="20px" />
+                {% endif %}
+                </div>
+                <div id="x{{ p.well_id }}" class="col-7"></div>
+            </div>
+        {% endfor %}
+
+        <hr>
+        <div class="row">
+            <div class="col-2">
+                {% if wells.has_previous %}
+                    <a href="?page=1">&laquo;</a>&nbsp;
+                    <a href="?page={{ wells.previous_page_number }}">&leftarrow;</a>
+                {% endif %}
+                &nbsp;{{ wells.number }} of {{ wells.paginator.num_pages }}&nbsp;
+                {% if wells.has_next %}
+                {% endif %}
+                {% if wells.has_next %}
+                    <a href="?page={{ wells.next_page_number }}">&rightarrow;</a>&nbsp;
+                    <a href="?page={{ wells.paginator.num_pages }}">&raquo;</a>
+                {% endif %}
+            </div>
+            <div class="col-2" title="Record Count">
+                <img src="{% static 'stack-overflow.svg' %}" width="20" height="20"> {{ record_count }}
+            </div>
+            <div class="col-2">
+                <a href="{% url 'mw_home' %}" title="Return to Menu"><img src="{% static 'keyboard-return.svg' %}" width="20"/></a>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+
+        function load_row_details(well_id, url) {
+            let id = "x" + well_id;
+            // find the element with the id of x + parcel_id
+            // and set the html to "loading"
+            const target = document.getElementById(id);
+            let loadingMsg ='...';
+            target.innerText = loadingMsg;
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    let newTxt = data.Description +
+                        '/SN# ' + data.SerialNumber +
+                        '/Rec# ' + data.RecordCount +
+                        '/Amts ' + data.TotalAmount;
+                    target.innerText = newTxt;
+                });
+        }
+
+        // execute function when the page is ready
+        function load_details() {
+            {% for p in wells.object_list %}
+                load_row_details("{{ p.well_id }}", "{% url 'well_details' p.well_id %}");
+            {% endfor %}
+        }
+
+    </script>
+{% endblock %}

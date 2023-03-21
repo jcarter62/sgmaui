@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load static %}
+<!-- add css inline -->
+{% block css %}
+    <style>
+        label {
+          display: block;
+          text-align: right;
+          width: 100px;
+          margin-right: 10px;
+          float: left;
+        }
+
+        input {
+          display: block;
+          margin-bottom: 10px;
+          float: left;
+        }
+
+        .div-container {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+    </style>
+{% endblock %}
+{% block content %}
+    <h2>Add Well Association Record Here.</h2><br><hr>
+    <form method="post">
+        {% csrf_token %}
+        <div class="div-container">
+            {{ form.as_div }}
+        <input type="submit" value="Submit">
+        </div>
+    </form>
+{% endblock %}

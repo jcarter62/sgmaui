@@ -1,0 +1,42 @@
+:root {
+    --bg-color: #000000;
+/*    --text-color: #ffffff;*/
+/*    --fg-color: #ffffff;*/
+    --bs-navbar-brand-color: #ffffff;
+    --bs-tertiary-bg-rgb: 255,255,255;
+    --bs-bg-opacity: 1;
+
+}
+
+body {
+    background-color: #000000;
+    color: #ffffff;
+}
+
+div.heading {
+    font-weight: bold;
+}
+
+div.container {
+    background-color: #000000;
+}
+
+/* Alternating rows for boostrap grid */
+/* ref: https://itecnote.com/tecnote/css-alternating-row-colors-in-bootstrap-3-no-table/ */
+
+.row:nth-child(even) {
+    background-color: #96caef;
+}
+
+.row:nth-child(odd) {
+    background-color: #000000;
+}
+
+#danger-text {
+    background-color: red;
+    color: #ffffff;
+}
+
+.icon {
+    background-color: #aaaaaa;
+}

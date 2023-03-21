@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <h1>Readings</h1>
+    Require user to be logged in.
+    <br>
+    <hr>
+    <ul>
+    <li><a href="{% url 'readings_ui' %}">Main UI</a></li>
+    <li><a href="{% url 'readings_manual' %}">Manual Reading Entry</a></li>
+    <li><a href="#">Upload Reading File</a></li>
+    </ul>
+    <hr>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <div class="container">
+    # Add rows per page setting.
+    <form method="post" action="#">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-10">
+            <h3>User Settings for: {{ username }}</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-10">
+            <label for="rowsPerPage">Rows per page:
+                <input name="rows_per_page" type="number" value="{{ rows_per_page }}" min="1" max="1000" step="1" />
+            </label>
+        </div> {# col-10 #}
+    </div> {# row #}
+    <div class="row">
+        <div class="col-10">
+            <label for="show_only_active_parcels">Show only active parcels
+                <input name="show_only_active_parcels" id="show_only_active_parcels"
+                       type="checkbox" value="true" {% if show_only_active_parcels %}checked{% endif %} />
+            </label>
+        </div> {# col-10 #}
+    </div> {# row #}
+        <div class="row">
+            <div class="col-3">
+    <button type="submit" class="btn btn-primary">Save</button>
+
+            </div>
+
+        </div>
+    </form>
+    </div> {# container #}
+{% endblock %}
