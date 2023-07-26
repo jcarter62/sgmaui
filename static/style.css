@@ -1,0 +1,43 @@
+div.heading {
+    font-weight: bold;
+}
+
+/* Alternating rows for boostrap grid */
+/* ref: https://itecnote.com/tecnote/css-alternating-row-colors-in-bootstrap-3-no-table/ */
+
+.row:nth-child(even) {
+    background-color: lightskyblue;
+}
+
+.row:nth-child(odd) {
+    background-color: white;
+}
+
+#danger-text {
+    background-color: red;
+    color: black;
+}
+
+.invert {
+    filter: invert(-1);
+}
+
+/*svg {*/
+/*    width: 1.5rem;*/
+/*}*/
+
+img.blue {
+    fill: blue;
+}
+
+img.red {
+    fill: red;
+}
+
+img.green {
+    fill: green;
+}
+
+img.yellow {
+    fill: yellow;
+}

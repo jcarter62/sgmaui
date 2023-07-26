@@ -1,0 +1,269 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <h3>Meters</h3>
+    <hr>
+    <div class="container">
+        <div class="row">
+            <div class="col-3">
+                <form class="d-flex" role="search">
+                    <input type="search" class="form-control"
+                           placeholder="Search" id="meter_search_input"
+                           onkeyup="meter_search()">
+                </form>
+                <div class="list-group" id="meter_list">
+                    {% for m in data.object_list %}
+                        <div class="row " id="id-{{ m.well_id }}"
+                             onclick="meter_click('{{ m.well_id }}')"
+                             onmouseover="row_over(this)" onmouseout="row_out(this)" >
+                            <div class="col-10">
+                                {{ m.well_id }}
+                            </div>
+                            <div class="col-2">
+                                {% if m.readingcount != '0' %}
+                                    <img src="{% static 'chart-bar.svg' %}" width="20" height="20">
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+
+                <div class="row">
+                    <div class="col-8">
+                        {% if data.has_previous %}
+                            <a href="?page=1&clr=1">&laquo;</a>&nbsp;
+                            <a href="?page={{ data.previous_page_number }}&clr=1">&leftarrow;</a>
+                        {% endif %}
+                        &nbsp;{{ data.number }} of {{ data.paginator.num_pages }}&nbsp;
+                        {% if data.has_next %}
+                        {% endif %}
+                        {% if data.has_next %}
+                            <a href="?page={{ data.next_page_number }}&clr=1">&rightarrow;</a>&nbsp;
+                            <a href="?page={{ data.paginator.num_pages }}&clr=1">&raquo;</a>
+                        {% endif %}
+                    </div>
+                    <div class="col-4" title="Record Count">
+                        <img src="{% static 'stack-overflow.svg' %}" width="20" height="20"> {{ record_count }}
+                    </div>
+                </div>
+                </div>
+            </div>
+            <div class="col-9">
+                <div class="row" id="meter_label">
+                </div>
+                <div class="row" id="graph">
+                    <canvas id="myChart" width="100%" height="40vh">
+                    </canvas>
+                    Graph here
+                </div>
+                <div class="row" id="readings">
+                    Grid with readings
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        let meter_list = [];
+        let meter = {};
+        let myChart = new Chart();
+
+        function hilight_meter(mid) {
+            let id = document.getElementById("id-" + mid);
+            id.classList.add("text-bg-primary");
+        }
+
+        function un_hilight_meter() {
+            let ids = document.getElementsByClassName("text-bg-primary");
+            for (let i = 0; i < ids.length; i++) {
+                ids[i].classList.remove("text-bg-primary");
+            }
+        }
+
+        function meter_click(well_id) {
+            console.log("Meter Click: " + well_id);
+            save_selected_meter(well_id)
+            load_readings();
+            un_hilight_meter();
+            hilight_meter(well_id);
+        }
+
+        function meter_search() {
+            function save_srch_value(srch_val) {
+                let session = getCookie("id");
+                let key_name = "meter_search_term";
+                if (srch_val == "") {
+                    srch_val = "X-RESET-X";
+                }
+                let url = "/params/set/" + session + "/" + key_name + "/" + srch_val;
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => {
+                    });
+            }
+
+            let srch = document.getElementById("meter_search_input");
+            let srch_term = srch.value;
+            setCookie('meter_search_term', srch_term, 30, "/");
+            save_srch_value(srch_term);
+            update_meter_list();
+        }
+
+
+        function load_meter_search() {
+            let session = getCookie("id");
+            let key_name = "meter_search_term";
+            let url = "/params/get/" + session + "/" + key_name;
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    let search = document.getElementById("meter_search_input");
+                    if (data.code == 200) {
+                        search.value = data.result;
+                    } else {
+                        search.value = "";
+                    }
+                });
+        }
+
+        function load_details() {
+            console.log("Loading details");
+            console.log("Meter Count: " + meter_list.length);
+            load_meter_search();
+            load_readings();
+        }
+
+        function save_selected_meter(well_id) {
+            let session = getCookie("id");
+            let key_name = "selected_meter";
+            let url = "/params/set/" + session + "/" + key_name + "/" + well_id;
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                });
+            setCookie('selected_meter', well_id, 30, "/");
+        }
+
+        // load readings into div id "readings"
+        function load_readings() {
+            function generate_header(wellid) {
+                let html = "";
+                html += '<div class="row"><div class="col-12">';
+                html += '<h4>Readings for: ' + wellid + '</h4>';
+                html += '</div></div>';
+                return html;
+            }
+
+            let session = getCookie("id");
+            wellid = getCookie("selected_meter");
+            let url = "/misc/well-readings/" + wellid;
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    let htmlid = document.getElementById("readings");
+                    let html = "";
+                    let readings = data.data;
+                    {#html += generate_header(wellid);#}
+                    html += '<table class="table table-sm">';
+                    html += '<thead>';
+                    html += '<tr>';
+                    html += '<th scope="col">Date</th>';
+                    html += '<th scope="col">Reading</th>';
+                    html += '<th scope="col">ACFT</th>';
+                    html += '</tr>';
+                    html += '<tbody>';
+                    for (let i = 0; i < readings.length; i++) {
+                        html += '<tr>';
+                        html += '<td>' + readings[i].readingdate + '</td>';
+                        html += '<td>' + readings[i].reading + '</td>';
+                        html += '<td>' + readings[i].actual + '</td>';
+                        html += '</tr>';
+                    }
+                    html += '</tbody></table>';
+                    htmlid.innerHTML = html;
+                    load_chart(wellid, readings);
+                    //
+                    // highlight the selected meter if visible.
+                    //
+                    un_hilight_meter();
+                    hilight_meter(wellid);
+                });
+
+            // load meter_label with generate_header(wellid)
+            let meter_label = document.getElementById("meter_label");
+            meter_label.innerHTML = generate_header(wellid);
+        }
+
+        function load_chart(wellid, data) {
+            console.log(wellid);
+            console.log(data);
+
+            // convert iso date to a m/d/yy format
+            function convertDateFormat(dateTimeStr) {
+                // Parse the input string into a Date object
+                const dateObj = new Date(dateTimeStr);
+
+                // Extract the month, day, and year from the Date object
+                const month = dateObj.getMonth() + 1; // Months are 0-indexed in JavaScript, so add 1
+                const day = dateObj.getDate();
+                const year = dateObj.getFullYear();
+
+                // Format the extracted values as desired
+                return `${month}/${day}/${year.toString().slice(-2)}`;
+            }
+
+            let readings = [];
+            for (let i = data.length-1; i >= 0; i--) {
+                let item = {
+                    // convert date to javascript date
+                    "date": convertDateFormat(data[i].readingdate),
+                    "actual": data[i].actual
+                }
+                readings.push(item);
+            }
+
+            if (myChart) {
+                myChart.destroy();
+            }
+
+            myChart = new Chart(
+                document.getElementById("myChart"),
+                {
+                type: 'bar',
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            minBarLength: 1,
+                        }
+                    },
+                    spanGaps: true,
+                },
+                data: {
+                    labels: readings.map(a => a.date),
+                    datasets: [{
+                        label: 'ACFT',
+                        data: readings.map(a => a.actual),
+                        backgroundColor: [
+                            'rgb(207,233,252)',
+                        ],
+                        borderColor: [
+                            'rgb(23,85,136)',
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                }
+            );
+        }
+
+        function row_over(element) {
+            element.style.backgroundColor = 'lightblue';
+        }
+
+        function row_out(element) {
+            element.style.backgroundColor = '';
+        }
+    </script>
+{% endblock %}

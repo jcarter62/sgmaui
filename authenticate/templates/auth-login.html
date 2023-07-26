@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="col-md-6 offset-md-3">
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <input type="text" class="form-control" name="username" placeholder="Enter Username">
+            </div>
+            <div class="form-group">
+                <input type="password" class="form-control" name="password" placeholder="Enter Password">
+            </div>
+            <br>
+            <button type="submit" name="submit" value="login" class="btn btn-primary">Login</button>
+            &nbsp;
+            <button type="submit" name="submit" value="register" class="btn btn-secondary">Register</button>
+            &nbsp;
+            <button type="submit" name="submit" value="reset" class="btn btn-secondary">Reset Password</button>
+        </form>
+    </div>
+{% endblock %}
+

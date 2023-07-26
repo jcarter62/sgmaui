@@ -1,0 +1,332 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <h3>Manual Readings</h3>
+    <div class="container">
+        <div class="row">
+            <div class="col-3">
+                <div class="row" id="well_list">
+                    <div class="row">
+                        <div class="col-6">
+                            <label>Well ID</label>
+                        </div>
+                        <div class="col-2">
+                            <label>Active</label>
+                        </div>
+                        <div class="col-2">
+                            <label>Has Reading</label>
+                        </div>
+                        <div class="col-1">
+                            &nbsp;
+                        </div>
+                    </div>
+                    {% for row in data.object_list %}
+                        <div class="row " id="id-{{ row.well_id }}"
+                             onclick="select_meter('{{ row.well_id }}')"
+                             onmouseover="row_over(this)" onmouseout="row_out(this)" >
+                            <div class="col-6">
+                                {{ row.well_id }}
+                            </div>
+                            <div class="col-2">
+                                {{ row.isactive }}
+                            </div>
+                            <div class="col-2">
+                                {{ row.hasreadings }}
+                            </div>
+                            <div class="col-1 selrow" id="sel{{ row.well_id }}">
+                                {{ row.needreading }}&nbsp;
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="row">
+                    <div class="col-8">
+                        {% if data.has_previous %}
+                            <a tabindex="90" href="?page=1">&laquo;</a>&nbsp;
+                            <a tabindex="91" href="?page={{ data.previous_page_number }}">&leftarrow;</a>
+                        {% endif %}
+                        &nbsp;{{ data.number }} of {{ data.paginator.num_pages }}&nbsp;
+                        {% if data.has_next %}
+                        {% endif %}
+                        {% if data.has_next %}
+                            <a tabindex="92" href="?page={{ data.next_page_number }}">&rightarrow;</a>&nbsp;
+                            <a tabindex="93" href="?page={{ data.paginator.num_pages }}">&raquo;</a>
+                        {% endif %}
+                    </div>
+                    <div class="col-4" title="Record Count">
+                        <img src="{% static 'stack-overflow.svg' %}" width="20" height="20"> {{ record_count }}
+                    </div>
+                </div>
+            </div>
+            <div class="col-9">
+                <div class="row">
+                    <div class="col-6">
+                        <div class="row" id="prev_read">
+                            <label>Previous Reading</label>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="row">
+                            <label>New Reading</label>
+                        </div>
+                        <div class="row">
+                            <label>Reading Date</label>
+                            <input tabindex="0" type="date" id="readingdate" value=""/>
+                        </div>
+                        <div class="row">
+                            <label>Reading Time</label>
+                            <input tabindex="1" type="time" id="readingtime" value=""/>
+                        </div>
+                        <div class="row">
+                            <label>Reading Value</label>
+                            <input tabindex="2" type="text" id="readingvalue" value=""/>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <span>
+                                <input type="button" value="Fill Curr Date/Time" title="Fill Curr Date/Time" 
+                                        onclick="fill_curr_dt()" />
+                                <input type="button" value="Duplicate" 
+                                       title="Duplicate" onclick="dup_reading()" />
+                                <input type="button" value="Save" title="Save" onclick="save_reading()" />
+                            </span>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <br>
+    <script>
+
+        var selected_meter_id = '';
+
+        function well_id_changed() {
+            let well_id = document.getElementById("inp_wellid").value;
+            lookup_last_reading_for_well(well_id);
+            filter_well_list(well_id);
+        }
+
+        async function filter_well_list(value) {
+            // filter the table based on current inp_wellid value.
+            for (let i = 0; i < meters.length; i++) {
+                let mid = meters[i].well_id;
+                let disp_style = "none";
+                if (mid.startsWith(value)) {
+                    disp_style = "table-row";
+                }
+                document.getElementById("m" + mid).style.display = disp_style;
+            }
+        }
+
+        function lookup_last_reading_for_well(well_id) {
+            let url = "/misc/well-last-reading/" + well_id;
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.data.length > 0)
+                        build_prev_reading(data);
+                    else
+                        build_empty_reading();
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+        }
+
+        function build_prev_reading(data) {
+            selected_meter_id = data.data[0].well_id;
+            let id = document.getElementById("prev_read");
+            let txt = "";
+            txt += "<div class='row'>";
+            txt += "<div class='col-8'><label>Previous Reading</label></div>";
+            txt += "</div>";
+            txt += "<hr>"
+            txt += "<div class='row'>";
+            txt += "<div class='col-4'><label>Well ID</label></div>";
+            txt += "<div class='col-8'><label>" + data.data[0].well_id + "</label></div>";
+            txt += "</div>";
+            txt += "<div class='row'>";
+            txt += "<div class='col-4'><label>Date</label></div>";
+            txt += "<div class='col-8'><label>" + data.data[0].readingdate + "</label></div>";
+            txt += "</div>";
+            txt += "<div class='row'>";
+            txt += "<div class='col-4'><label>Reading Value</label></div>";
+            txt += "<div class='col-8'><label>" + data.data[0].reading + "</label></div>";
+            txt += "</div>";
+            txt += "</div>";
+            id.innerHTML = txt;
+        }
+
+        function build_empty_reading() {
+            selected_meter_id = '';
+            let id = document.getElementById("prev_read");
+            let txt = "";
+            txt += "<div class='row'>";
+            txt += "<div class='col-8'><label>Previous Reading</label></div>";
+            txt += "</div>";
+            txt += "<div class='row'>";
+            txt += "<div class='col-4'><label>Date</label></div>";
+            txt += "<div class='col-8'><label>N.A.</label></div>";
+            txt += "</div>";
+            txt += "<div class='row'>";
+            txt += "<div class='col-4'><label>Reading Value</label></div>";
+            txt += "<div class='col-8'><label>N.A.</label></div>";
+            txt += "</div>";
+            txt += "</div>";
+            id.innerHTML = txt;
+        }
+
+        function select_meter(mid) {
+            function save_search_value(val) {
+                let session = getCookie("id");
+                let key_name = "selected_meter";
+                if (val == "") {
+                    val = "X-RESET-X";
+                }
+                let url = "/params/set/" + session + "/" + key_name + "/" + val;
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => { });
+            }
+
+            function clear_selrow() {
+                let items = document.getElementsByClassName("selrow");
+                for (let i = 0; i < items.length; i++) {
+                    items[i].innerHTML = "";
+                }
+            }
+
+            function set_selrow(mid) {
+                let id = document.getElementById("sel" + mid);
+                id.innerHTML = "<img src='{% static 'view-sequential.svg' %}' width='20' height='20'>";
+            }
+
+            function hilight_meter(mid) {
+                let id = document.getElementById("id-" + mid);
+                id.style.backgroundColor = 'red';
+            }
+
+            // save cookie for meter id
+            setCookie('selected_meter', mid, 30, "/");
+            save_search_value(mid);
+            // clear_selrow();
+            // set_selrow(mid);
+            hilight_meter(mid);
+
+            // Clear input form.
+            clear_form();
+
+            // lookup and display previous reading for this meter.
+            lookup_last_reading_for_well(mid);
+            // make readingdate the focus.
+            document.getElementById("readingdate").focus();
+
+        }
+
+        function row_over(element) {
+            element.style.backgroundColor = 'lightblue';
+        }
+
+        function row_out(element) {
+            element.style.backgroundColor = '';
+        }
+
+        function dup_reading() {
+            let readingvalue = document.getElementById("readingvalue").value;
+            if (selected_meter_id == '' ) {
+                // do nothing
+            } else {
+                let url = "/misc/well-last-reading/" + selected_meter_id;
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.data.length > 0) {
+                            document.getElementById("readingvalue").value = data.data[0].reading;
+                        }
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    });
+            }
+
+        }
+
+        function fill_curr_dt() {
+            let today = new Date();
+            let dd = String(today.getDate()).padStart(2, '0');
+            let mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+            let yyyy = today.getFullYear();
+            let hh = String(today.getHours()).padStart(2, '0');
+            let min = String(today.getMinutes()).padStart(2, '0');
+            let ss = String(today.getSeconds()).padStart(2, '0');
+            let readingdate = yyyy + '-' + mm + '-' + dd;
+            let readingtime = hh + ':' + min + ':' + ss;
+
+            document.getElementById("readingdate").value = readingdate;
+            document.getElementById("readingtime").value = readingtime;
+        }
+
+        function save_reading() {
+            // get datetime from readingdate and readingtime
+            let readingdate = document.getElementById("readingdate").value;
+            let readingtime = document.getElementById("readingtime").value;
+
+            // get readingvalue
+            let readingvalue = document.getElementById("readingvalue").value;
+
+            // get meter id
+            let meter_id = selected_meter_id;
+
+            // get user name
+            let user_name = getCookie("user_name", "user");
+
+            let obj = {
+                meter_id : meter_id,
+                readingvalue : readingvalue,
+                user_name : user_name,
+                readingdate : readingdate,
+                readingtime : readingtime
+            }
+
+            // convert obj to base64 string
+            obj = JSON.stringify(obj);
+            // encode json obj as base64 string
+            let objstr = btoa(obj);
+
+            // construct url to add reading
+            let url = "/misc/add-reading/" + objstr;
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status == "success") {
+                        // clear the form
+                        clear_form();
+                        // make readingdate the focus.
+                        document.getElementById("readingdate").focus();
+                        // lookup and display previous reading for this meter.
+                        lookup_last_reading_for_well(meter_id);
+                    }
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+        }
+
+        function clear_form() {
+            let rdate = document.getElementById("readingdate");
+            let rtime = document.getElementById("readingtime");
+            let rval = document.getElementById("readingvalue");
+            rdate.value = "";
+            rtime.value = "";
+            rval.value = "";
+            rdate.focus();
+            return;
+        }
+
+
+    </script>
+
+{% endblock %}

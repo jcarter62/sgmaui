@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <div class="container text-left">
+        <div class="row">
+            <div class="col-10">
+                <h4>Well: {{ well_id }}</h4>
+            </div>
+            <div class="col-2">
+                <img class="icon" src="{% static 'page-next.svg' %}" width="20px" onclick="show_readings('{{ well_id }}');"/>
+            </div>
+        </div>
+        <div class="row heading">
+            <div class="col-12">Account</div>
+        </div>
+        <div class="row heading">
+            <div class="col-2">Method</div>
+            <div class="col-2"
+            {% if amount_alarm %}
+                style="color: red;"
+            {% endif %}
+            >{{ amount_hdr }}</div>
+            <div class="col-2">Begin Date</div>
+            <div class="col-2">End Date</div>
+            <div class="col-1">Order</div>
+            <div class="col-1">Active</div>
+            <div class="col-2">Action</div>
+        </div>
+
+        {% for p in well.object_list %}
+            <!-- Create a form for each record -->
+            <form action="{% url 'save_well_details' %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="rec_id" value="{{ p.rec_id }}">
+                <input type="hidden" name="well_id" value="{{ p.well_id }}">
+                <div class="row">
+                    <div class="col-2">
+                        <input type="text" name="account" value="{{ p.account }}" class="form-control">
+                    </div>
+                    <div class="col-10">
+                        <a href="{% url 'account_wells' p.account %}">
+                            <label id="{{ p.rec_id }}"></label>
+                        </a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-2">
+                        <select name="method" id="method">
+                            <option value="PCT" {% if p.method == 'PCT' %}selected{% endif %}>Percentage</option>
+                            <option value="AMT" {% if p.method == 'AMT' %}selected{% endif %}>Amount</option>
+                        </select>
+                    </div>
+                    <div class="col-2">
+                        <input type="number" step="any" min="0" max="5000.00" name="amount" value="{{ p.amount }}" class="form-control">
+                    </div>
+                    <div class="col-2">
+                        <input type="date" name="begindate" value="{{ p.begindate }}" class="form-control">
+                    </div>
+                    <div class="col-2">
+                        <input type="date" name="enddate" value="{{ p.enddate }}" class="form-control">
+                    </div>
+                    <div class="col-1">
+                        <input type="number" min="0" max="100" name="ordering" value="{{ p.ordering }}" class="form-control">
+                    </div>
+                    <div class="col-1">
+                        <input type="text" name="isactive" value="{{ p.isactive }}" class="form-control">
+                    </div>
+                    <div class="col-2">
+                        <input type="submit" value="Update" name="button" class="btn btn-primary btn-sm">
+                        <input type="submit" value="Delete" name="button" class="btn btn-danger btn-sm">
+                    </div>
+                </div>
+            </form>
+        {% endfor %}
+
+        <hr>
+        <div class="row">
+            <div class="col-2">
+                {% if well.has_previous %}
+                    <a href="?page=1">&laquo;</a>&nbsp;
+                    <a href="?page={{ well.previous_page_number }}">&leftarrow;</a>
+                {% endif %}
+                &nbsp;{{ well.number }} of {{ well.paginator.num_pages }}&nbsp;
+                {% if well.has_next %}
+                {% endif %}
+                {% if well.has_next %}
+                    <a href="?page={{ well.next_page_number }}">&rightarrow;</a>&nbsp;
+                    <a href="?page={{ well.paginator.num_pages }}">&raquo;</a>
+                {% endif %}
+            </div>
+            <div class="col-2" title="Record Count">
+                <img src="{% static 'stack-overflow.svg' %}" width="20" height="20"> {{ record_count }}
+            </div>
+            <div class="col-2" title="Display List of Wells.">
+                <a href="{% url 'display_wells' %}"><img src="{% static 'keyboard-return.svg' %}" width="20" height="20"></a>
+            </div>
+        <div class="col-2" title="Re Order Wells, staring at 10, step of 2.">
+            <a href="{% url 'reorder_well_records' well_id %}">
+                <img src="{% static 'sort-bool-ascending.svg' %}" width="20" height="20">
+            </a>
+        </div>
+        <div class="col-1" title="Add a new record to the well.">
+            <a href="{% url 'add_well_assoc_record' well_id %}">
+                <img src="{% static 'plus-outline.svg' %}" width="20" height="20">
+            </a>
+        </div>
+    </div>
+    <script type="text/javascript">
+
+        function load_account_name( rec_id, account, url) {
+            let id = rec_id;
+            // find the element with the id of x + parcel_id
+            // and set the html to "loading"
+            const target = document.getElementById(id);
+            let loadingMsg = '... Loading ...';
+            target.innerText = loadingMsg;
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    let newtext = data.fullname;
+                    target.innerHTML = newtext;
+                });
+        }
+
+        // execute function when the page is ready
+        function load_details() {
+            {% for p in well.object_list %}
+                {
+                    // <form action="{% url 'save_well_details' %}" method="post">
+                    let id = "{{ p.rec_id }}";
+                    let url = "{{ p.url }}";
+                    let account = "{{ p.account }}";
+                    load_account_name(id, account, url);
+                }
+            {% endfor %}
+        }
+
+        function show_readings(well_id) {
+            // save wellid to cookie "selected_meter"
+            setCookie('selected_meter', well_id, 30, "/");
+            setCookie('meter_search_term', well_id, 30, "/");
+            // redirect to the readings page
+            window.location.href = "{% url 'readings_ui' %}";
+        }
+    </script>
+{% endblock %}

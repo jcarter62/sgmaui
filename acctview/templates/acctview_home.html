@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    Account View Home
+    <ul>
+        <li><a href="{% url 'acccounts' %}">Accounts</a></li>
+        <li><a href="{% url 'account_wells' %}">Account Wells</a></li>
+    </ul>
+{% endblock %}

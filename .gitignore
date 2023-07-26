@@ -1,0 +1,17 @@
+.idea
+.vscode
+
+# Local .env files
+.env
+.env.local
+.env.*.local
+
+# py cache
+__pycache__/
+
+
+# virtualenv
+venv
+
+# sqlite3 databases
+*.sqlite3

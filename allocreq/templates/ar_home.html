@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    Require user to be logged in.
+    <br>
+    <hr>
+    Allocation Request for SGMA Program
+    <br>
+    <hr>
+    If user is a customer, Present list of parcels and request records for selected customer.
+    <br>
+    If user is an employee,<br>
+    Present an input for account number, and then list all parcels owned by selected account.
+{% endblock %}

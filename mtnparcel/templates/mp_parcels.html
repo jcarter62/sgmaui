@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <div class="container text-left">
+        <div class="row heading">
+            <div class="col-2">Parcel ID</div>
+            <div class="col-5">Legal Description</div>
+            <div class="col-1">Acres</div>
+            <div class="col-1">SGMA Acres</div>
+            <div class="col-1">SPA Acres</div>
+        </div>
+        {% for p in parcels.object_list %}
+            <div class="row" id="x{{ p }}">
+                <div class="col-2">{{ p }}</div>
+            </div>
+        {% endfor %}
+
+        <hr>
+        <div class="row">
+            <div class="col-2">
+                {% if parcels.has_previous %}
+                    <a href="?page=1">&laquo;</a>&nbsp;
+                    <a href="?page={{ parcels.previous_page_number }}">&leftarrow;</a>
+                {% endif %}
+                &nbsp;{{ parcels.number }} of {{ parcels.paginator.num_pages }}&nbsp;
+                {% if parcels.has_next %}
+                {% endif %}
+                {% if parcels.has_next %}
+                    <a href="?page={{ parcels.next_page_number }}">&rightarrow;</a>&nbsp;
+                    <a href="?page={{ parcels.paginator.num_pages }}">&raquo;</a>
+                {% endif %}
+            </div>
+            <div class="col-10">
+                {{ record_count }} Records
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+
+        function load_parcel_details(parcel_id, url) {
+            let id = "x" + parcel_id;
+            // find the element with the id of x + parcel_id
+            // and set the html to "loading"
+            const target = document.getElementById(id);
+            let loadingMsg =
+                '<div class="col-2">' + parcel_id + '</div>' +
+                '<div class="col-5"> ... Loading ... </div>' +
+                '<div class="col-1">&nbsp;</div>' +
+                '<div class="col-1">&nbsp;</div>' +
+                '<div class="col-1">&nbsp;</div>';
+            target.innerHTML = loadingMsg;
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+
+                    let newhtml =
+                        '<div class="col-2">' + parcel_id + '</div>' +
+                        '<div class="col-5">' + data.data.legaldesc + '</div>' +
+                        '<div class="col-1">' + data.data.acres + '</div>' +
+                        '<div class="col-1">' + data.data.sgma_acres + '</div>' +
+                        '<div class="col-1">' + data.data.spa_acres + '</div>';
+                    target.innerHTML = newhtml;
+
+                    try {
+                        if ( data.data.isactive == "0" ) {
+                            target.classList.add("fst-italic");
+                            target.classList.add("text-decoration-line-through");
+                        }
+                    } catch (e) {
+                        console.log(e);
+                    }
+
+                    try {
+                        let title = data.data.notes;
+                        target.setAttribute("title", title);
+                    } catch (e) {
+                        console.log(e);
+                    }
+
+                });
+        }
+
+        // execute function when the page is ready
+        function load_details() {
+            {% for p in parcels.object_list %}
+                load_parcel_details("{{ p }}", "parcel-details/{{ p }}");
+            {% endfor %}
+        }
+
+        function page_search(search_value) {
+            window.location.href = ".?search=" + search_value;
+        }
+
+    </script>
+{% endblock %}
