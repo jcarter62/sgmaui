@@ -82,11 +82,14 @@ def display_well_details(request, well_id: str):
     # calculate total amount
     total = 0.0
     for d in data:
-        total += float(d['amount'])
+        if d['isactive'] == '1':
+            total += float(d['amount'])
 
+    amount_hdr = 'Amount ({:.2f})'.format(total)
     if total > 100.01 or total < 99.99:
-        amount_hdr = 'Amount ({:.2f})'.format(total)
         amount_alarm = True
+    else:
+        amount_alarm = False
 
     record_count = data.__len__()
 
