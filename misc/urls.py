@@ -9,4 +9,5 @@ urlpatterns = [
     path('well-readings/<str:well_id>', views.well_readings, name='well_readings'),
     path('well-last-reading/<str:well_id>', views.well_last_reading, name='well_last_reading'),
     path('add-reading/<str:params>', views.add_reading, name='add_reading'),
+    path('dbinfo', views.dbinfo, name='dbinfo'),
 ]

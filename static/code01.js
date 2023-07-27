@@ -131,6 +131,20 @@ function set_theme() {
     // }
 }
 
+// obtain database name from api, and display the value in footer element.
+function load_dbinfo_string() {
+    let url = "/misc/dbinfo";
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            let element = document.getElementById("dbinfotext");
+            if ( data.message == 'success' ) {
+                element.innerText = data.data;
+            } else {
+                element.innerText = "?";
+            }
+        });
+}
 
 // execute load_search_value() when the page is loaded
 window.onload = function() {
@@ -140,5 +154,7 @@ window.onload = function() {
     }
     display_session_id();
     set_theme();
+    //
+    load_dbinfo_string();
 }
 

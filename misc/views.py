@@ -166,3 +166,24 @@ def add_reading(request, params):
         response.message = 'Record Add Failed'
 
     return JsonResponse(response.json(), status=response.status_code)
+
+
+def dbinfo(request):
+    result = {}
+    code = HTTPStatus.OK
+    # /misc/dbinfo'
+    url = config('API_URL') + f'misc/dbinfo'
+    response = requests.get(url)
+    if response.status_code >= 200 and response.status_code < 300:
+        code = response.status_code
+        data = response.json()['data']
+        if data == '':
+            code = HTTPStatus.NO_CONTENT
+        result['message'] = "success"
+    else:
+        result['message'] = "error"
+        code = HTTPStatus.INTERNAL_SERVER_ERROR
+
+    result['data'] = data
+    return JsonResponse(result, status=code)
+

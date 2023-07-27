@@ -107,7 +107,7 @@
 <footer class="footer">
     <div class="container">
     <div class="row">
-        <div class="col-11">
+        <div class="col-9">
         <span class="text-muted">
             {% if user.is_authenticated %}
                 user: {{ request.user.username }}
@@ -116,6 +116,9 @@
             {% endif %}
             <label class="text-muted" id="session_id_label">&nbsp;</label>
         </span>
+        </div>
+        <div class="col-2" id="dbinfotext">
+            &nbsp;
         </div>
         <div class="col-1">
             <img onclick="click_night_day()" class="icon" src="{% static 'theme-light-dark.svg' %}" width="20px"/>
