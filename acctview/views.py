@@ -132,5 +132,16 @@ def account_wells(request, account: str = None):
 
     context['wells'] = api_data.copy()
 
+    url = config('API_URL') + 'account/balance/' + account
+
+    balance_data = []
+
+    response = requests.get(url)
+    if response.status_code == 200:
+        rawdata = response.json()
+        balance_data = rawdata['data']
+
+    context['balance'] = balance_data.copy()
+
     return render(request, 'account_wells.html', context=context)
 

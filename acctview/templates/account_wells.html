@@ -34,6 +34,33 @@
                 {% endfor %}
             </div>
         </div>
+    <hr>
+        <div class="row">
+            <div class="col-4">
+                &nbsp;
+            </div>
+            <div class="col-1">
+                &nbsp;
+            </div>
+            <div class="col-7">
+                <div class="row">
+                    <div class="col-2">Category</div>
+                    <div class="col-6">&nbsp;</div>
+                    <div class="col-2">Balance</div>
+                    <div class="col-1">Priority</div>
+                </div>
+
+                {% for b in balance %}
+                    <div class="row">
+                        <div class="col-2">{{ b.code_id }}</div>
+                        <div class="col-6">{{ b.code_text }}</div>
+                        <div class="col-2">{{ b.qty }}</div>
+                        <div class="col-1">{{ b.priority }}</div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
     </div>
 {% endblock %}
 
