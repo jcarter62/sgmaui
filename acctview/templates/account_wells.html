@@ -18,7 +18,7 @@
                 <div class="row">
                     <div class="col-3">Well ID</div>
                     <div class="col-2">Amount</div>
-                    <div class="col-2">Begin Date</div>
+                    <div class="col-3">Begin Date</div>
                     <div class="col-3">Owner Type</div>
                     <div class="col-1">#</div>
                 </div>
@@ -27,7 +27,7 @@
                     <div class="row">
                         <div class="col-3"><a href="{% url 'display_well_details' w.well_id %}">{{ w.well_id }}</a></div>
                         <div class="col-2">{{ w.amount }}</div>
-                        <div class="col-2">{{ w.begindate }}</div>
+                        <div class="col-3">{{ w.begindate }}</div>
                         <div class="col-3">{{ w.ownertype }}</div>
                         <div class="col-1">{{ w.ownercount }}</div>
                     </div>

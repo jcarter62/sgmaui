@@ -6,8 +6,12 @@ div.heading {
 /* ref: https://itecnote.com/tecnote/css-alternating-row-colors-in-bootstrap-3-no-table/ */
 
 .row:nth-child(even) {
-    background-color: lightskyblue;
+    background-color: rgba(135, 206, 250, 0.5);
 }
+
+/*.container .row:nth-child(even) {*/
+/*    background-color: lightskyblue;*/
+/*}*/
 
 .row:nth-child(odd) {
     background-color: white;

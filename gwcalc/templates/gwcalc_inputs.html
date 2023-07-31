@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <form method="post">
+    {% csrf_token %}
+    <h3>Groundwater Calculation - Input Parameters</h3><br>
+    <div class="container">
+        <div class="row">
+            <div class="col-3">From Date:</div>
+            <div class="col-6">
+                <input id="gc_from_date" name="gc_from_date"
+                       type="date" value="{{ from_date }}" onchange="save_inp_val('gc_from_date')" >
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-3">To Date:</div>
+            <div class="col-6">
+                <input id="gc_to_date" name="gc_to_date"
+                        type="date" value="{{ to_date }}" onchange="save_inp_val('gc_to_date')">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-3">Calc Date:</div>
+            <div class="col-6">
+                <input id="gc_calc_date" name="gc_calc_date"
+                        type="date" value="{{ calc_date }}"  onchange="save_inp_val('gc_calc_date')">
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="col-3">TC Code:</div>
+            <div class="col-6">
+                <input id="gc_tc_code" name="gc_tc_code"
+                        type="text" value="{{ tc_code }}" onchange="save_inp_val('gc_tc_code')">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-3">Code Code:</div>
+            <div class="col-6">
+                <input id="gc_code_code" id="gc_code_code"
+                        type="text" value="{{ code_code }}" onchange="save_inp_val('gc_code_code')">
+            </div>
+        </div>
+
+        <hr>
+        <div class="row">
+            <div class="col-3">
+                <button type="submit" name="action" value="calc">
+                    Calculate
+                </button>
+            </div>
+            <div class="col-3">
+                <button type="submit" name="action" value="view">
+                    View Results
+                </button>
+            </div>
+        </div>
+    </div>
+    </form>
+    &nbsp;
+    <br>
+    <div class="container" id="lastcalc">
+        <div class="row">
+            Previous Calculations
+        </div>
+        <div class="row">
+            <div class="col-1">State</div>
+            <div class="col-3">Time Stamp</div>
+            <div class="col-8">Parameters</div>
+        </div>
+       {% for r in results %}
+        <div class="row">
+            <div class="col-1">{{ r.process_state }}</div>
+            <div class="col-3">{{ r.updated }}</div>
+            <div class="col-8">{{ r.params }}</div>
+        </div>
+        {% endfor %}
+    </div>
+
+<script src="{% static 'gwcalc_inputs.js' %}"></script>
+{% endblock %}

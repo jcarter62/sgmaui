@@ -32,6 +32,7 @@ urlpatterns = [
     path('misc/', include('misc.urls')),
     path('acctview/', include('acctview.urls')),
     path('readings/', include('readings.urls')),
+    path('gwcalc/', include('gwcalc.urls')),
     path('admin/', admin.site.urls),
 
 ]

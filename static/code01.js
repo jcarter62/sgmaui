@@ -158,3 +158,10 @@ window.onload = function() {
     load_dbinfo_string();
 }
 
+
+function save_inp_val(inpid) {
+    let id = document.getElementById(inpid);
+    let key_name = id.id;
+    let key_val = id.value;
+    setCookie(key_name, key_val, 365, "/");
+}

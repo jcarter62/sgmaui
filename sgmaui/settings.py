@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'misc',
     'acctview',
     'readings',
+    'gwcalc',
 ]
 
 MIDDLEWARE = [

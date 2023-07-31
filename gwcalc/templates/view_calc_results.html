@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <h3>Groundwater Calculation - Results {{ filter }}</h3><br>
+    <div class="container">
+        <div class="row">
+            <div class="col-6"><h4>Summary</h4></div>
+        </div>
+        <div class="row">
+            <div class="col-3">Accounts:</div>
+            <div class="col-3">{{ account_count }}</div>
+        </div>
+        <div class="row">
+            <div class="col-3">Transaction Count:</div>
+            <div class="col-3">{{ transaction_count }}</div>
+        </div>
+        <div class="row">
+            <div class="col-3">Total Qty:</div>
+            <div class="col-3">{{ total_qty }}</div>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="col-1">Account</div>
+            <div class="col-1">Category</div>
+            <div class="col-1">Qty</div>
+            <div class="col-4">Desc Text</div>
+            <div class="col-1">Transid</div>
+        </div>
+        {% for r in results %}
+            <div class="row">
+                <div class="col-1">{{ r.name_id }}</div>
+                <div class="col-1">{{ r.code_id }}</div>
+                <div class="col-1">{{ r.amount }}</div>
+                <div class="col-4">{{ r.description }}</div>
+                <div class="col-1">{{ r.transid }}</div>
+            </div>
+        {% endfor %}
+        <hr>
+        <div class="row">
+                <div class="col-1">&nbsp;</div>
+                <div class="col-1">&nbsp;</div>
+                <div class="col-1">{{ total_amount }}</div>
+                <div class="col-4">&nbsp;</div>
+                <div class="col-1">&nbsp;</div>
+            </div>
+
+    </div>
+    <script src="{% static 'gwcalc_inputs.js' %}"></script>
+
+{% endblock %}
