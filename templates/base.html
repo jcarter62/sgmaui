@@ -20,7 +20,7 @@
 <div class="container">
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#"><h4>{{ organization_name }}</h4></a>
+            <a class="navbar-brand" href="/"><h4>{{ organization_name }}</h4></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                     data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
                     aria-expanded="false" aria-label="Toggle navigation">
@@ -31,14 +31,16 @@
                     <li class="nav-item">
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    Home
+                                    Menu
                                 </a>
 
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="/">Home</a></li>
-                            <li><a class="dropdown-item" href="{% url 'acctview_home' %}">Accounts</a></li>
-                            <li><a class="dropdown-item" href="{% url 'mw_home' %}">Wells</a></li>
-                            <li><a class="dropdown-item" href="{% url 'readings_home' %}">Readings</a></li>
+{#                            <li><a class="dropdown-item" href="/">Menu</a></li>#}
+                            <li><a class="dropdown-item" href="/">Home <img src="{% static 'home-analytics.svg' %}" width="20" height="20"></a></li>
+                            <li><a class="dropdown-item" href="{% url 'acctview_home' %}">Accounts <img src="{% static 'account-group.svg' %}" width="20" height="20"></a></li>
+                            <li><a class="dropdown-item" href="{% url 'mw_home' %}">Wells <img src="{% static 'water-well-outline.svg' %}" width="20" height="20"></a></li>
+                            <li><a class="dropdown-item" href="{% url 'readings_home' %}">Readings <img src="{% static 'counter.svg' %}" width="20" height="20"></a></li>
+                            <li><a class="dropdown-item" href="{% url 'gw_input_params' %}">GW Calc&amp;Post <img src="{% static 'calculator.svg' %}" width="20" height="20"></a></li>
                         </ul>
                 </li>
                     </li>
@@ -52,10 +54,10 @@
                                     {#            <li><a class="dropdown-item" href="#">Action</a></li>#}
                                     {#            <li><a class="dropdown-item" href="#">Another action</a></li>#}
                                     {#            <li><hr class="dropdown-divider"></li>#}
-                                    <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
-                                    <li><a class="dropdown-item" href="{% url 'password_change' %}">Change Password</a></li>
-                                    <li><a class="dropdown-item" href="{% url 'profile' %}">Update Profile</a></li>
-                                    <li><a class="dropdown-item" href="{% url 'user-settings' %}">Settings</a></li>
+                                    <li><a class="dropdown-item" href="{% url 'logout' %}">Logout <img src="{% static 'location-exit.svg' %}" width="20" height="20"></a></li>
+                                    <li><a class="dropdown-item" href="{% url 'password_change' %}">Change Password <img src="{% static 'form-textbox-password.svg' %}" width="20" height="20"></a></li>
+                                    <li><a class="dropdown-item" href="{% url 'profile' %}">Update Profile <img src="{% static 'account-cog.svg' %}" width="20" height="20"></a></li>
+                                    <li><a class="dropdown-item" href="{% url 'user-settings' %}">Settings <img src="{% static 'cogs.svg' %}" width="20" height="20"></a></li>
                                 </ul>
                             </li>
 {#                            <a class="nav-link" href="{% url 'logout' %}">Logout</a>#}
