@@ -193,11 +193,11 @@ def gw_export_calc_results(request):
     # Export functionality
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="gw_calc_results.csv"'
-    writer = csv.writer(response, delimiter=',', quotechar='"', quoting=csv.QUOTE_ALL)
-    writer.writerow(['Description', 'Memo', 'Name ID', 'Amount'])
+    writer = csv.writer(response, delimiter=',', quotechar='"', quoting=csv.QUOTE_NONNUMERIC)
+    writer.writerow(['Account', 'Category', 'Description', 'Memo', 'Qty'])
 
     for item in calc_data:
-        writer.writerow([item['description'], item['memo'], item['name_id'], item['amount']])
+        writer.writerow([int(item['name_id']), item['code_id'], item['description'], item['memo'], float(item['amount'])])
 
     return response
 
