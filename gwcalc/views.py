@@ -1,6 +1,10 @@
+import csv
+import openpyxl
+from openpyxl.utils import get_column_letter
 from django.core.paginator import Paginator
 from django.urls import reverse
 from django.shortcuts import render, redirect
+from django.http import HttpResponse
 from decouple import config
 from home.usersettings import UserSettings
 from django.contrib.auth.decorators import login_required
@@ -97,7 +101,7 @@ def gw_input_params(request):
     return render(request, 'gwcalc_inputs.html', context=context)
 
 
-@login_required
+# @login_required
 def gw_view_calc_results(request):
     context = {}
     search_term = ''
@@ -118,7 +122,7 @@ def gw_view_calc_results(request):
         "results": {},
         "filter": filter_txt,
     }
-    # handle post request
+
     url = config('API_URL') + 'gwcalc/calc_results'
 
     calc_data = []
@@ -158,5 +162,94 @@ def gw_view_calc_results(request):
 
     return render(request, 'view_calc_results.html', context=context)
 
+def gw_export_calc_results(request):
+    def quote_wrap(txt):
+        return '"' + txt + '"'
 
+    search_term = ''
+    filter_txt = ''
 
+    cookies = request.COOKIES.items()
+    for item in cookies:
+        if item[0] == 'search_term':
+            search_term = item[1]
+
+    url = config('API_URL') + 'gwcalc/calc_results'
+
+    calc_data = []
+
+    response = requests.get(url)
+    if response.status_code == 200:
+        rawdata = response.json()
+        if search_term > '':
+            filter_txt = '- Filtered by: ' + search_term
+            for item in rawdata['data']:
+                txt = item['description'] + ' ' + item['memo'] + ' ' + item['name_id']
+                if search_term in txt:
+                    calc_data.append(item)
+        else:
+            calc_data = rawdata['data']
+
+    # Export functionality
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="gw_calc_results.csv"'
+    writer = csv.writer(response, delimiter=',', quotechar='"', quoting=csv.QUOTE_ALL)
+    writer.writerow(['Description', 'Memo', 'Name ID', 'Amount'])
+
+    for item in calc_data:
+        writer.writerow([item['description'], item['memo'], item['name_id'], item['amount']])
+
+    return response
+
+def gw_export_calc_results_xlsx(request):
+    def quote_wrap(txt):
+        return '"' + txt + '"'
+
+    search_term = ''
+    filter_txt = ''
+
+    cookies = request.COOKIES.items()
+    for item in cookies:
+        if item[0] == 'search_term':
+            search_term = item[1]
+
+    url = config('API_URL') + 'gwcalc/calc_results'
+
+    calc_data = []
+
+    response = requests.get(url)
+    if response.status_code == 200:
+        rawdata = response.json()
+        if search_term > '':
+            filter_txt = '- Filtered by: ' + search_term
+            for item in rawdata['data']:
+                txt = item['description'] + ' ' + item['memo'] + ' ' + item['name_id']
+                if search_term in txt:
+                    calc_data.append(item)
+        else:
+            calc_data = rawdata['data']
+
+    # Export functionality
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename="gw_calc_results.xlsx"'
+
+    # Create a new workbook and add a worksheet
+    workbook = openpyxl.Workbook()
+    worksheet = workbook.active
+
+    # Write the header row
+    header_row = ['Description', 'Memo', 'Name ID', 'Amount']
+    for col_num, column_title in enumerate(header_row, 1):
+        cell = worksheet.cell(row=1, column=col_num)
+        cell.value = column_title
+
+    # Write data rows
+    for row_num, item in enumerate(calc_data, 1):
+        for col_num, key in enumerate(['description', 'memo', 'name_id', 'amount'], 1):
+            cell = worksheet.cell(row=row_num + 1, column=col_num)
+            cell.value = item[key]
+
+    # Save the workbook to the response
+    workbook.save(response)
+
+    return response
