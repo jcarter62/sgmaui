@@ -36,6 +36,14 @@ def display_wells(request):
         else:
             data = rawdata['data']
 
+        # determine if well does not have any well associations, and is part of wmis and sgma.
+        # if so, allow user to create a well association.
+        for d in data:
+            if d['wa'] != 'X' and d['wmis'] == 'X' and d['sgma'] == 'X':
+                d['show_add_assoc'] = True
+            else:
+                d['show_add_assoc'] = False
+
     record_count = data.__len__()
 
     if request.user.is_authenticated:
@@ -43,9 +51,7 @@ def display_wells(request):
     else:
         username = ''
 
-#    page_size = request.COOKIES.get('page_size', 10)
     page_size = UserSettings(username=username).settings['rows_per_page']
-
 
     p = Paginator(data, page_size)
     page = request.GET.get('page', 1)

@@ -22,6 +22,11 @@
                     </a>
                 {% else %}
                     <img id="icon-image" class="invert" title="There are no records available" src="{% static 'cancel.svg' %}" width="20px" />
+                    {% if p.show_add_assoc %}
+                        <a href="{% url 'add_well_assoc_record' p.well_id %}">
+                            <img class="invert" title="Add Well Association" src="{% static 'plus-outline.svg' %}" width="20px" />
+                        </a>
+                    {% endif %}
                 {% endif %}
                 </div>
                 <div id="x{{ p.well_id }}" class="col-7"></div>
