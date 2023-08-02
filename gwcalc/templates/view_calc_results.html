@@ -5,10 +5,17 @@
         <div class="col-10">
             <h3>Groundwater Calculation - Results {{ filter }}</h3>
         </div>
-        <div class="col-2">
-            <button type="button" class="btn" title="Export data table to CSV">
+        <div class="col-1">
+            <button type="button" class="btn" title="Export to CSV">
                 <a href="{% url 'gw_export_calc_results' %}">
-                    <img src="{% static 'export.svg' %}" width="20" height="20">
+                    <img src="{% static 'file-delimited-outline.svg' %}" width="20" height="20">
+                </a>
+            </button>
+        </div>
+        <div class="col-1">
+            <button type="button" class="btn" title="Export to Excel">
+                <a href="{% url 'gw_export_calc_results_xlsx' %}">
+                    <img src="{% static 'microsoft-excel.svg' %}" width="20" height="20">
                 </a>
             </button>
         </div>

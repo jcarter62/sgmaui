@@ -193,11 +193,17 @@ def gw_export_calc_results(request):
     # Export functionality
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="gw_calc_results.csv"'
-    writer = csv.writer(response, delimiter=',', quotechar='"', quoting=csv.QUOTE_NONNUMERIC)
+    writer = csv.writer(response, delimiter=',', quotechar='"', quoting=csv.QUOTE_NONNUMERIC, dialect='excel')
     writer.writerow(['Account', 'Category', 'Description', 'Memo', 'Qty'])
 
     for item in calc_data:
-        writer.writerow([int(item['name_id']), item['code_id'], item['description'], item['memo'], float(item['amount'])])
+        writer.writerow([
+            int(item['name_id']),
+            item['code_id'],
+            item['description'],
+            item['memo'],
+            float(item['amount'])
+        ])
 
     return response
 
@@ -238,16 +244,23 @@ def gw_export_calc_results_xlsx(request):
     worksheet = workbook.active
 
     # Write the header row
-    header_row = ['Description', 'Memo', 'Name ID', 'Amount']
+    header_row = ['Account', 'Category', 'Description', 'Memo', 'Qty']
+
     for col_num, column_title in enumerate(header_row, 1):
         cell = worksheet.cell(row=1, column=col_num)
         cell.value = column_title
 
     # Write data rows
     for row_num, item in enumerate(calc_data, 1):
-        for col_num, key in enumerate(['description', 'memo', 'name_id', 'amount'], 1):
+        for col_num, key in enumerate(['name_id', 'code_id', 'description', 'memo', 'amount'], 1):
             cell = worksheet.cell(row=row_num + 1, column=col_num)
-            cell.value = item[key]
+            if key == 'name_id':
+                value = int(item[key])
+            elif key == 'amount':
+                value = float(item[key])
+            else:
+                value = item[key]
+            cell.value = value
 
     # Save the workbook to the response
     workbook.save(response)
