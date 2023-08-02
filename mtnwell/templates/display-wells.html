@@ -29,7 +29,15 @@
                     {% endif %}
                 {% endif %}
                 </div>
-                <div id="x{{ p.well_id }}" class="col-7"></div>
+                {% if p.isactive == "X" %}
+                    <div id="x{{ p.well_id }}" class="col-7"></div>
+                {% else %}
+                    <div id="x{{ p.well_id }}" class="col-6"></div>
+                    <div class="col-1 text-bg-warning">
+                        Inactive
+{#                        <img id="icon-image" class="invert" title="Well is not active" src="{% static 'cancel.svg' %}" width="20px" />#}
+                    </div>
+                {% endif %}
             </div>
         {% endfor %}
 
