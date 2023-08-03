@@ -36,10 +36,10 @@ def display_wells(request):
         else:
             data = rawdata['data']
 
-        # determine if well does not have any well associations, and is part of wmis and sgma.
+        # determine if well does not have any well associations, and is part of wmis and (sgma or gwmp).
         # if so, allow user to create a well association.
         for d in data:
-            if d['wa'] != 'X' and d['wmis'] == 'X' and d['sgma'] == 'X':
+            if (d['wa'] != 'X') and (d['wmis'] == 'X') and (d['gwmp'] == 'X' or d['sgma'] == 'X'):
                 d['show_add_assoc'] = True
             else:
                 d['show_add_assoc'] = False
