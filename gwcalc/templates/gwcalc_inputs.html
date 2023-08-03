@@ -54,6 +54,13 @@
                     View Results
                 </button>
             </div>
+
+            <div class="col-3">
+                <button type="submit" name="action" value="postdata" title="{{ postbtninfo }}" {{ postbtnstate }}>
+                    Post Data
+                </button>
+            </div>
+
         </div>
     </div>
     </form>
@@ -64,15 +71,17 @@
             Previous Calculations
         </div>
         <div class="row">
-            <div class="col-1">State</div>
-            <div class="col-3">Time Stamp</div>
-            <div class="col-8">Parameters</div>
+            <div class="col">State</div>
+            <div class="col">Time Stamp</div>
+            <div class="col">Parameters</div>
+            <div class="col">Errors</div>
         </div>
        {% for r in results %}
         <div class="row">
-            <div class="col-1">{{ r.process_state }}</div>
-            <div class="col-3">{{ r.updated }}</div>
-            <div class="col-8">{{ r.params }}</div>
+            <div class="col">{{ r.process_state }}</div>
+            <div class="col">{{ r.updated }}</div>
+            <div class="col">{{ r.params }}</div>
+            <div class="col">{{ r.errors }}</div>
         </div>
         {% endfor %}
     </div>

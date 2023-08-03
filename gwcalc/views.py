@@ -50,6 +50,8 @@ def gw_input_params(request):
         "tc_code": tc_code,
         "code_code": code_code,
         "results": {},
+        "postbtnstate": 'disabled',
+        "postbtninfo": "Post is disabled until calculation is complete.",
     }
 
 
@@ -71,10 +73,13 @@ def gw_input_params(request):
         if 'gc_code_code' in request.POST:
             code_code = request.POST['gc_code_code']
 
-        # now we need to calculate.
+        calc_post_param = '0'
+        if request.POST['action'] == 'postdata':
+            calc_post_param = '1'
 
+        # now we need to calculate.
         url = config('API_URL') + 'gwcalc/calc/' + from_date + '/' + to_date + '/' + \
-              calc_date + '/' + tc_code + '/' + code_code + '/0'
+              calc_date + '/' + tc_code + '/' + code_code + '/' + calc_post_param  + '?username=' + username
 
         calc_data = []
 
@@ -82,6 +87,8 @@ def gw_input_params(request):
         if response.status_code == 200:
             rawdata = response.json()
             calc_data = rawdata['data']
+
+        set_postbtn_state(calc_data, context)
 
         context['results'] = calc_data.copy()
 
@@ -95,10 +102,22 @@ def gw_input_params(request):
             rawdata = response.json()
             calc_data = rawdata['data']
 
+        #
+        set_postbtn_state(calc_data, context)
+
         context['results'] = calc_data.copy()
 
-
     return render(request, 'gwcalc_inputs.html', context=context)
+
+
+def set_postbtn_state(calc_data, context):
+    if len(calc_data) > 0:
+        if calc_data[0]['process_state'] == 'calculated' and int(calc_data[0]['errors']) == 0:
+            context['postbtnstate'] = ''
+            context['postbtninfo'] = 'ok to post.'
+        else:
+            context['postbtnstate'] = 'disabled'
+            context['postbtninfo'] = 'Post is disabled until calculated with no errors.'
 
 
 # @login_required
