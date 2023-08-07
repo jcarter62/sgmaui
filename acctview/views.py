@@ -143,5 +143,19 @@ def account_wells(request, account: str = None):
 
     context['balance'] = balance_data.copy()
 
+    url = config('API_URL') + 'account/transactions/' + account
+
+    transaction_data = []
+
+    response = requests.get(url)
+    if response.status_code == 200:
+        rawdata = response.json()
+        transaction_data = rawdata['data']
+
+    # sort transactions by date ascending, then by code_id ascending
+    transaction_data.sort(key=lambda x: (x['trandate'], x['code_id']))
+
+    context['transactions'] = transaction_data.copy()
+
     return render(request, 'account_wells.html', context=context)
 

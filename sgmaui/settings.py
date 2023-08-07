@@ -31,7 +31,11 @@ ALLOWED_HOSTS_CONFIG = config('ALLOWED_HOSTS', default='')
 if ALLOWED_HOSTS_CONFIG == '':
     ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 else:
-    ALLOWED_HOSTS = [ALLOWED_HOSTS_CONFIG]
+    if ',' in ALLOWED_HOSTS_CONFIG:
+        hostlist = ALLOWED_HOSTS_CONFIG.split(',')
+    else:
+        hostlist = [ALLOWED_HOSTS_CONFIG]
+    ALLOWED_HOSTS = hostlist
 
 # Application definition
 

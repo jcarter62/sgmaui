@@ -25,7 +25,8 @@
 
                 {% for w in wells %}
                     <div class="row">
-                        <div class="col-3"><a href="{% url 'display_well_details' w.well_id %}">{{ w.well_id }}</a></div>
+                        <div class="col-3"><a href="{% url 'display_well_details' w.well_id %}">{{ w.well_id }}</a>
+                        </div>
                         <div class="col-2">{{ w.amount }}</div>
                         <div class="col-3">{{ w.begindate }}</div>
                         <div class="col-3">{{ w.ownertype }}</div>
@@ -34,33 +35,51 @@
                 {% endfor %}
             </div>
         </div>
-    <hr>
-        <div class="row">
-            <div class="col-4">
-                &nbsp;
+        <hr>
+
+            <div class="row">
+                <div class="col-12 fs-3 fw-bold ">
+                    Balances
+                </div>
             </div>
-            <div class="col-1">
-                &nbsp;
-            </div>
-            <div class="col-7">
-                <div class="row">
-                    <div class="col-2">Category</div>
-                    <div class="col-6">&nbsp;</div>
-                    <div class="col-2">Balance</div>
-                    <div class="col-1">Priority</div>
+                <div class="row fw-bold">
+                    <div class="col">Code</div>
+                    <div class="col-4">&nbsp;</div>
+                    <div class="col">Balance</div>
+                    <div class="col">Priority of Use</div>
                 </div>
 
                 {% for b in balance %}
                     <div class="row">
-                        <div class="col-2">{{ b.code_id }}</div>
-                        <div class="col-6">{{ b.code_text }}</div>
-                        <div class="col-2">{{ b.qty }}</div>
-                        <div class="col-1">{{ b.priority }}</div>
+                        <div class="col">{{ b.code_id }}</div>
+                        <div class="col-4">{{ b.code_text }}</div>
+                        <div class="col">{{ b.qty }}</div>
+                        <div class="col">{{ b.priority }}</div>
                     </div>
                 {% endfor %}
+            <hr>
+            <div class="row">
+                <div class="col-12 fs-3 fw-bold">
+                    Transactions
+                </div>
             </div>
-        </div>
+                <div class="row fw-bold">
+                    <div class="col">Date</div>
+                    <div class="col">Code</div>
+                    <div class="col-4">Memo</div>
+                    <div class="col">Type</div>
+                    <div class="col">Quantity</div>
+                </div>
 
+            {% for t in transactions %}
+                <div class="row">
+                    <div class="col">{{ t.trandate }}</div>
+                    <div class="col">{{ t.code_id }}</div>
+                    <div class="col-4">{{ t.tran_text }}</div>
+                    <div class="col">{{ t.wtrtype }}</div>
+                    <div class="col">{{ t.tran_qty }}</div>
+                </div>
+            {% endfor %}
     </div>
 {% endblock %}
 
