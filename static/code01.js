@@ -150,12 +150,12 @@ function load_dbinfo_string() {
 function show_test_environment(db) {
     let body_element = document.getElementById("base_body_id");
     let menu_element = document.getElementById("base_menu_bar_id");
-    if ( db == "wmis_dev" ) {
-        body_element.classList.add("testdb");
-        menu_element.classList.add("testdb");
-    } else {
+    if ( db == "wmis_ibm" ) {
         body_element.classList.add("productiondb");
         menu_element.classList.add("productiondb");
+    } else {
+        body_element.classList.add("testdb");
+        menu_element.classList.add("testdb");
     }
 }
 
