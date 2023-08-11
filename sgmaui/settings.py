@@ -71,6 +71,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'home.sessionmw.SessionMiddleware',
+    'home.sessionmw.Logger'
 ]
 
 ROOT_URLCONF = 'sgmaui.urls'
@@ -87,7 +88,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'sgmaui.contextprocessor.add_company_info'
+                'sgmaui.contextprocessor.add_company_info',
             ],
         },
     },
@@ -169,3 +170,4 @@ LOGOUT_REDIRECT_URL = '/'
 DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', default='admin@localhost')
 EMAIL_HOST = config('EMAIL_HOST', default='localhost')
 EMAIL_PORT = config('EMAIL_PORT', default=25, cast=int)
+
