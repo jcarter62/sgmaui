@@ -33,6 +33,7 @@ urlpatterns = [
     path('acctview/', include('acctview.urls')),
     path('readings/', include('readings.urls')),
     path('gwcalc/', include('gwcalc.urls')),
+    path('versioninfo/', include('versioninfo.urls')),
     path('admin/', admin.site.urls),
 
 ]
