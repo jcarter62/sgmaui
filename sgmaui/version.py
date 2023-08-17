@@ -1,4 +1,4 @@
 #
 # Version information for sgmaui application
 #
-VERSION = "20230816"
+VERSION = "1.1.5"
