@@ -90,23 +90,16 @@ def gw_input_params(request):
 
         set_postbtn_state(calc_data, context)
 
+    #
+    # Now get calculation history to display
+    # at bottom of form.
+    #
+    url = config('API_URL') + 'gwcalc/calc_history'
+    response = requests.get(url)
+    if response.status_code == 200:
+        rawdata = response.json()
+        calc_data = rawdata['data']
         context['results'] = calc_data.copy()
-
-    else:
-        url = config('API_URL') + 'gwcalc/calc_status'
-
-        calc_data = []
-
-        response = requests.get(url)
-        if response.status_code == 200:
-            rawdata = response.json()
-            calc_data = rawdata['data']
-
-        #
-        set_postbtn_state(calc_data, context)
-
-        context['results'] = calc_data.copy()
-
     return render(request, 'gwcalc_inputs.html', context=context)
 
 
