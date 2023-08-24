@@ -180,4 +180,12 @@ def view_user_settings(request):
     return render(request, 'user-settings.html', context=context)
 
 
+def view_not_authorized(request):
+    context = {
+        'title': 'Not Authorized',
+        'usergroup': config('USERGROUP', default='Not-Defined'),
+        'admingroup': config('ADMINGROUP', default='Not-Defined'),
+    }
+
+    return render(request, 'not-authorized.html', context=context)
 

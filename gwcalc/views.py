@@ -9,6 +9,7 @@ from decouple import config
 from home.usersettings import UserSettings
 from django.contrib.auth.decorators import login_required
 import requests
+from usergroups import UserGroups
 
 
 # Create your views here.
@@ -22,6 +23,9 @@ def gw_input_params(request):
     calc_date = ''
     tc_code = ''
     code_code = ''
+
+    if UserGroups(request).not_user:
+        return redirect(reverse('not-authorized'))
 
     if request.user.is_authenticated:
         username = request.user.username
@@ -52,8 +56,11 @@ def gw_input_params(request):
         "results": {},
         "postbtnstate": 'disabled',
         "postbtninfo": "Post is disabled until calculation is complete.",
+        "enable_buttons": False
     }
 
+    if UserGroups(request).is_admin:
+        context['isadmin'] = True
 
     #
     # handle post request

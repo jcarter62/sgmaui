@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+    <br>
+    <style>
+    /* Target the anchor (link) elements and apply the following styles */
+    a {
+      color: black; /* Change the color to black (or any color you prefer) */
+      text-decoration: none; /* Remove the underline */
+    }
+
+    /* Optionally, you can add styles for visited links as well */
+    a:visited {
+      {#color: purple; /* Change the color of visited links (if desired) */#}
+        color: black;
+    }
+    </style>
+    <p>
+    Your account is not part of a required group.<br>
+    <br>
+    The user group is: {{ usergroup }}<br>
+    The admin group is: {{ admingroup }}<br>
+    <br>
+    Please contact your administrator to have your account added to the correct group.<br>
+    </p>
+{% endblock %}

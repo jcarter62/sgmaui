@@ -13,4 +13,5 @@ urlpatterns = [
     path('showenv/', views.view_showenv, name='showenv'),
     path('params/set/<str:session>/<str:key>/<str:value>', views.view_set_param, name='setparam'),
     path('params/get/<str:session>/<str:key>', views.view_get_param, name='getparam'),
+    path('not-authorized', views.view_not_authorized, name='not-authorized'),
     ]

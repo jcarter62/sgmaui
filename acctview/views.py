@@ -5,6 +5,7 @@ from decouple import config
 from home.usersettings import UserSettings
 from django.contrib.auth.decorators import login_required
 import requests
+from usergroups import UserGroups
 
 
 # Create your views here.
@@ -18,6 +19,9 @@ def accounts(request):
     api_data = []
     search_term = ''
     show_account_chk = 'off'
+
+    if UserGroups(request).not_user:
+        return redirect(reverse('not-authorized'))
 
     if request.user.is_authenticated:
         username = request.user.username
@@ -93,10 +97,12 @@ def account_wells(request, account: str = None):
             address_rows.append('Account is Inactive')
         return address_rows
 
+    if UserGroups(request).not_user:
+        return redirect(reverse('not-authorized'))
+
     if account is None:
         url = reverse('acccounts')
         return redirect(url)
-
 
     context = {}
     context['account'] = account
@@ -158,4 +164,3 @@ def account_wells(request, account: str = None):
     context['transactions'] = transaction_data.copy()
 
     return render(request, 'account_wells.html', context=context)
-

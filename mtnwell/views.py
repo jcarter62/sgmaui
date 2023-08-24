@@ -8,6 +8,7 @@ from django.http import HttpResponse, JsonResponse
 from .forms import WellAssocForm
 from home.usersettings import UserSettings
 from uuid import uuid4
+from usergroups import UserGroups
 
 # Create your views here.
 def mw_home(request):
@@ -15,6 +16,10 @@ def mw_home(request):
 
 @login_required
 def display_wells(request):
+
+    if UserGroups(request).not_user:
+        return redirect(reverse('not-authorized'))
+
     context = {}
     data = []
     search_term = ''
@@ -58,12 +63,17 @@ def display_wells(request):
     wells = p.get_page(page)
     context['wells'] = wells
     context['record_count'] = record_count
+    context['isadmin'] = UserGroups(request).is_admin
 
     return render(request, 'display-wells.html', context=context)
 
 
 @login_required
 def display_well_details(request, well_id: str):
+
+    if UserGroups(request).not_user:
+        return redirect(reverse('not-authorized'))
+
     context = {}
     data = []
     amount_hdr = 'Amount'
@@ -109,6 +119,14 @@ def display_well_details(request, well_id: str):
     context['well_id'] = well_id
     context['amount_hdr'] = amount_hdr
     context['amount_alarm'] = amount_alarm
+    context['isadmin'] = UserGroups(request).is_admin
+    context['btn_hint'] = ''
+    if context['isadmin']:
+        context['btn_disable'] = ''
+    else:
+        context['btn_disable'] = 'disabled'
+        context['btn_hint'] = 'Only administrators can update, add or delete well associations.'
+
 
     return render(request, 'display-well-details.html', context=context)
 

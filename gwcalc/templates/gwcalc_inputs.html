@@ -46,7 +46,8 @@
         <hr>
         <div class="row">
             <div class="col-3">
-                <button type="submit" name="action" value="calc">
+                <button type="submit" name="action" value="calc"
+                {% if not isadmin %} disabled {% endif %} >
                     Calculate
                 </button>
             </div>
@@ -57,9 +58,11 @@
             </div>
 
             <div class="col-3">
+                {% if isadmin %}
                 <button type="submit" name="action" value="postdata" title="{{ postbtninfo }}" {{ postbtnstate }}>
                     Post Data
                 </button>
+                {% endif %}
             </div>
 
         </div>

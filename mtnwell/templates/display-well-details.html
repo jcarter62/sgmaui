@@ -65,9 +65,9 @@
                     <div class="col-1">
                         <input type="text" name="isactive" value="{{ p.isactive }}" class="form-control">
                     </div>
-                    <div class="col-2">
-                        <input type="submit" value="Update" name="button" class="btn btn-primary btn-sm">
-                        <input type="submit" value="Delete" name="button" class="btn btn-danger btn-sm">
+                    <div class="col-2" title="{{ btn_hint }}">
+                        <input type="submit" value="Update" name="button" class="btn btn-primary btn-sm" {{ btn_disable }}>
+                        <input type="submit" value="Delete" name="button" class="btn btn-danger btn-sm" {{ btn_disable }}>
                     </div>
                 </div>
             </form>
@@ -95,14 +95,14 @@
                 <a href="{% url 'display_wells' %}"><img src="{% static 'keyboard-return.svg' %}" width="20" height="20"></a>
             </div>
         <div class="col-2" title="Re Order Wells, staring at 10, step of 2.">
-            <a href="{% url 'reorder_well_records' well_id %}">
+            {% if isadmin %}<a href="{% url 'reorder_well_records' well_id %}">{% endif %}
                 <img src="{% static 'sort-bool-ascending.svg' %}" width="20" height="20">
-            </a>
+            {% if isadmin %}</a>>{% endif %}
         </div>
         <div class="col-1" title="Add a new record to the well.">
-            <a href="{% url 'add_well_assoc_record' well_id %}">
-                <img src="{% static 'plus-outline.svg' %}" width="20" height="20">
-            </a>
+            {% if isadmin %}<a href="{% url 'add_well_assoc_record' well_id %}">{% endif %}
+                <img src="{% static 'plus-outline.svg' %}" width="20" height="20" >
+            {% if isadmin %}</a>>{% endif %}
         </div>
     </div>
     <script type="text/javascript">
