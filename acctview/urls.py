@@ -7,5 +7,5 @@ urlpatterns = [
     path('accounts/', views.accounts, name='accounts'),
     path('account-wells/', views.account_wells, name='account_wells'),
     path('account-wells/<str:account>', views.account_wells, name='account_wells'),
-
+    path('acct-graph-disp', views.acct_graph_disp, name='acct_graph_disp'),
 ]

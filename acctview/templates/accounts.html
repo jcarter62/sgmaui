@@ -36,8 +36,11 @@
                 &nbsp;
             </div>
             {# add small button to open  'account_wells' page #}
-            <div class="col-2">
+            <div class="col-1">
                 <a href="{% url 'account_wells' row %}" class="btn btn-primary btn-sm" id="y{{ row }}y">Wells</a>
+            </div>
+            <div class="col-1">
+                <a href="{% url 'acct_graph_disp' %}?account={{ row }}" class="btn btn-primary btn-sm" id="g{{ row }}g">Graph</a>
             </div>
         </div>
     {% endfor %}

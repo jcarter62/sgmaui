@@ -1,3 +1,5 @@
+import json
+
 from django.core.paginator import Paginator
 from django.urls import reverse
 from django.shortcuts import render, redirect
@@ -101,7 +103,7 @@ def account_wells(request, account: str = None):
         return redirect(reverse('not-authorized'))
 
     if account is None:
-        url = reverse('acccounts')
+        url = reverse('accounts')
         return redirect(url)
 
     context = {}
@@ -164,3 +166,105 @@ def account_wells(request, account: str = None):
     context['transactions'] = transaction_data.copy()
 
     return render(request, 'account_wells.html', context=context)
+
+
+@login_required
+def acct_graph_disp(request):
+    def not_empty(value):
+        if value is None or value == '' or value.lower() == 'none':
+            return False
+        else:
+            return True
+
+    def build_account_name(data):
+        return data['name']
+
+    # ref: https://chat.openai.com/share/9a5259a7-709e-4538-9a9e-405baf89a6d2
+    account = request.GET.get('account', None)
+    months = request.GET.get('months', None)
+    show_wells = request.GET.get('show_wells', None)
+
+    if UserGroups(request).not_user:
+        return redirect(reverse('not-authorized'))
+
+    if account is None:
+        url = reverse('accounts')
+        return redirect(url)
+
+    context = {}
+    context['account'] = account
+
+    api_data = []
+
+    url = config('API_URL') + 'account/one/' + account
+
+    response = requests.get(url)
+    if response.status_code == 200:
+        rawdata = response.json()
+        api_data = rawdata['data']
+
+    context['account'] = build_account_name(api_data)
+    context['account_id'] = account
+
+    api_data = []
+
+    # Get graph data
+    url = config('API_URL') + 'account/well-graph-data?account=' + account
+    if not (show_wells is None):
+        url = url + '&show_wells=' + show_wells
+    if not (months is None):
+        url = url + '&months=' + months
+
+    if show_wells is None:
+        context['show_wells'] = True
+    else:
+        if show_wells == '1':
+            context['show_wells'] = True
+        else:
+            context['show_wells'] = False
+
+    response = requests.get(url)
+    if response.status_code == 200:
+        rawdata = response.json()
+        api_data = rawdata['data']
+
+    if context['show_wells']:
+        # sort by yearmonth, then by well_id
+        api_data.sort(key=lambda x: (x['yearmonth'], x['well_id']))
+    else:
+        # sort by yearmonth
+        api_data.sort(key=lambda x: x['yearmonth'])
+
+    # add labels for graph
+    for d in api_data:
+        if context['show_wells']:
+            d['label'] = d['yearmonth'] + ' ' + d['well_id']
+        else:
+            d['label'] = d['yearmonth']
+
+    # Reformat data for graph
+    # Create list of unique yearmonths
+    yearmonths = []
+    for d in api_data:
+        if d['yearmonth'] not in yearmonths:
+            yearmonths.append(d['yearmonth'])
+
+    well_ids = []
+    for d in api_data:
+        if d['well_id'] not in well_ids:
+            well_ids.append(d['well_id'])
+
+    # now create a list of yearmonths, and for each yearmonth, create a list of well_id and acft
+    graph_data = []
+    for ym in yearmonths:
+        graph_data.append({'yearmonth': ym, 'data': []})
+        for d in api_data:
+            if d['yearmonth'] == ym:
+                graph_data[-1]['data'].append({'well_id': d['well_id'], 'acft': d['acft']})
+
+    context['graph_data'] = json.dumps(graph_data.copy())
+    context['yearmonths'] = json.dumps(yearmonths.copy())
+    context['well_ids'] = json.dumps(well_ids.copy())
+
+    return render(request, 'well_graph.html', context=context)
+
