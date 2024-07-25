@@ -47,3 +47,7 @@ img.yellow {
     fill: yellow;
 }
 
+.hidden {
+    display: none;
+}
+

@@ -28,18 +28,29 @@
             </div>
         </div>
         <hr>
-        <div class="row">
+
+        <div class="row" id="code1">
             <div class="col-3">TC Code:</div>
             <div class="col-6">
                 <input id="gc_tc_code" name="gc_tc_code"
-                        type="text" value="{{ tc_code }}" onchange="save_inp_val('gc_tc_code')">
+                       type="text" value="{{ tc_code }}" onchange="save_inp_val('gc_tc_code')">
+                <small class="form-text text-muted hidden" id="gc_tc_code_sv">Suggested value: TC0040</small>
             </div>
         </div>
-        <div class="row">
-            <div class="col-3">Code Code:</div>
+        <div class="row" id="code2">
+            <div class="col-3">CC SGMA:</div>
             <div class="col-6">
                 <input id="gc_code_code" id="gc_code_code"
                         type="text" value="{{ code_code }}" onchange="save_inp_val('gc_code_code')">
+                <small class="form-text text-muted hidden" id="gc_code_code_sv">Suggested value: CC0013</small>
+            </div>
+        </div>
+        <div class="row" id="code3">
+            <div class="col-3">CC Exclude:</div>
+            <div class="col-6">
+                <input id="gc_cc_exclude" id="gc_cc_exclude"
+                        type="text" value="{{ code_code }}" onchange="save_inp_val('gc_cc_exclude')">
+                <small class="form-text text-muted hidden" id="gc_cc_exclude_sv">Suggested value: CC0014</small>
             </div>
         </div>
 
