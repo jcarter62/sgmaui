@@ -51,3 +51,24 @@ img.yellow {
     display: none;
 }
 
+/* Add this CSS to your stylesheet */
+.loading-spinner {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+}
+
+.loading-spinner.active {
+    display: block;
+}
+
+.center-text {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+

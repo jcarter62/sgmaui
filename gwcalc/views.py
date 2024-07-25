@@ -23,6 +23,7 @@ def gw_input_params(request):
     calc_date = ''
     tc_code = ''
     code_code = ''
+    cc_exclude = ''
 
     if UserGroups(request).not_user:
         return redirect(reverse('not-authorized'))
@@ -44,6 +45,8 @@ def gw_input_params(request):
             tc_code = item[1]
         if item[0] == 'gc_code_code':
             code_code = item[1]
+        if item[0] == 'gc_cc_exclude':
+            cc_exclude = item[1]
 
     context = {
         "title": "Groundwater Calculation Input",
@@ -53,6 +56,7 @@ def gw_input_params(request):
         "calc_date": calc_date,
         "tc_code": tc_code,
         "code_code": code_code,
+        "cc_exclude": cc_exclude,
         "results": {},
         "postbtnstate": 'disabled',
         "postbtninfo": "Post is disabled until calculation is complete.",
@@ -79,6 +83,8 @@ def gw_input_params(request):
             tc_code = request.POST['gc_tc_code']
         if 'gc_code_code' in request.POST:
             code_code = request.POST['gc_code_code']
+        if 'gc_cc_exclude' in request.POST:
+            cc_exclude = request.POST['gc_cc_exclude']
 
         calc_post_param = '0'
         if request.POST['action'] == 'postdata':
@@ -86,7 +92,8 @@ def gw_input_params(request):
 
         # now we need to calculate.
         url = config('API_URL') + 'gwcalc/calc/' + from_date + '/' + to_date + '/' + \
-              calc_date + '/' + tc_code + '/' + code_code + '/' + calc_post_param  + '?username=' + username
+              calc_date + '/' + tc_code + '/' + code_code + '/' + cc_exclude + '/' + calc_post_param + \
+              '/user=' + username
 
         calc_data = []
 

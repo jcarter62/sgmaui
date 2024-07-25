@@ -52,6 +52,18 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
+document.addEventListener('DOMContentLoaded', function() {
+    const calculateButton = document.querySelector('button[name="action"][value="calc"]');
+    const loadingSpinner = document.getElementById('loadingSpinner');
+
+    calculateButton.addEventListener('click', function() {
+        loadingSpinner.classList.add('active');
+    });
+
+    document.querySelector('form').addEventListener('submit', function() {
+        loadingSpinner.classList.remove('active');
+    });
+});
 
 gwcalc_load_values();
 
